@@ -11,12 +11,14 @@ public class ExchangeRate {
     private Currency targetCurrency;
     private BigDecimal rate;
 
-    public ExchangeRate(long id, Currency baseCurrency, Currency targetCurrency, BigDecimal rate) {
+    /*public ExchangeRate(long id, Currency baseCurrency, Currency targetCurrency, BigDecimal rate) {
         this.id = id;
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
         this.rate = rate;
-    }
+    }*/
+
+    private ExchangeRate() { };
 
     public long getId() {
         return id;
@@ -58,6 +60,9 @@ public class ExchangeRate {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+    public static Builder newBuilder(){
+        return new ExchangeRate().new Builder();
     }
 
     public class Builder{

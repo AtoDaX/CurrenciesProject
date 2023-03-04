@@ -34,6 +34,7 @@ public class CurrenciesServlet extends HttpServlet {
         if(reqSign==null || reqCode==null || reqName == null){
             response.sendError(400, "There are not filled fields!");
         }
+
         Currency toInsert = Currency.newBuilder()
                 .setName(reqName)
                 .setCode(reqCode)
@@ -41,7 +42,6 @@ public class CurrenciesServlet extends HttpServlet {
                 .build();
 
         boolean dbAnswer = crud.create(toInsert);
-
         if (!dbAnswer){
             response.sendError(409, "Currency with such code already exists!");
         }

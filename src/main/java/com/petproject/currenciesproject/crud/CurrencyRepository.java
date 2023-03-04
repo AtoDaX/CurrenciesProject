@@ -2,20 +2,27 @@ package com.petproject.currenciesproject.crud;
 
 import com.petproject.currenciesproject.dto.Currency;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CurrencyRepository extends AbstractCRUD<Currency>{
+    protected Connection connection;
+
+    {
+        try {
+            dataSource.setUrl(dbUrl);
+            connection = dataSource.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private Currency generateCurrency(ResultSet resultSet){
         Currency toReturn;
         try {
             toReturn = Currency.newBuilder()
-                    .setCurrencyId((long) resultSet.getInt("id"))
+                    .setCurrencyId(resultSet.getLong("id"))
                     .setCode(resultSet.getString("code"))
                     .setName(resultSet.getString("fullName"))
                     .setSign(resultSet.getString("sign"))
@@ -29,6 +36,7 @@ public class CurrencyRepository extends AbstractCRUD<Currency>{
         }
     }
 
+    @Override
     public Currency readByCode(String code){
         Currency toReturn;
         String statement = "SELECT * FROM currencies WHERE code = ?";
@@ -93,16 +101,6 @@ public class CurrencyRepository extends AbstractCRUD<Currency>{
         } catch (SQLException e) {
             return false;
         }
-    }
-
-    @Override
-    public void update(Currency entity) {
-
-    }
-
-    @Override
-    public void delete(Long id) {
-
     }
 
     public boolean isPresent(String value){

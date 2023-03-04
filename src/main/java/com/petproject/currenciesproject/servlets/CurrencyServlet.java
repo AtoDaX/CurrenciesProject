@@ -1,10 +1,7 @@
 package com.petproject.currenciesproject.servlets;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.petproject.currenciesproject.crud.AbstractCRUD;
 import com.petproject.currenciesproject.crud.CurrencyRepository;
 import com.petproject.currenciesproject.dto.Currency;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,14 +18,14 @@ public class CurrencyServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/json");
-        String code = request.getPathInfo().replaceAll("/", "").toUpperCase();
+        String currencyCode = request.getPathInfo().replaceAll("/", "").toUpperCase();
 
-        if (code.length() != 3) {
+        if (currencyCode.length() != 3) {
             response.sendError(400, "Incorrect currency code");
             return;
         }
 
-        Currency currency = crud.readByCode(code);
+        Currency currency = crud.readByCode(currencyCode);
         if (currency == null) {
             response.sendError(404, "No currency with this code");
             return;

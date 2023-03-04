@@ -11,16 +11,7 @@ public abstract class AbstractCRUD<T> implements CRUDInterface<T>{
 
     //protected static final String dbUrl ="jdbc:sqlite:../resources/data.db";
     protected static SQLiteDataSource dataSource = new SQLiteDataSource();
-    protected Connection connection;
 
-    {
-        try {
-            dataSource.setUrl(dbUrl);
-            connection = dataSource.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 
 
