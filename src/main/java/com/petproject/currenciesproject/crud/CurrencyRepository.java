@@ -52,12 +52,12 @@ public class CurrencyRepository extends AbstractCRUD<Currency>{
 
     @Override
     public Currency readById(Long id) {
-        Currency toReturn;
+
         String statement = "SELECT * FROM currencies WHERE id = ?";
         try(PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
             preparedStatement.setLong(1,id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            toReturn = generateCurrency(resultSet);
+            Currency toReturn = generateCurrency(resultSet);
             return toReturn;
         } catch (SQLException e) {
             return null;

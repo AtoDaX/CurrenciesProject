@@ -44,17 +44,18 @@ public class ExchangeRepository extends AbstractCRUD<ExchangeRate> {
     @Override
     public ExchangeRate readByCode(String code) {
         ExchangeRate toReturn;
-        String statement = "SELECT * FROM exchangeRates WHERE baseCurrencyId=? AND targetCurrencyId=?";
         String baseCurrencyCode = code.substring(0,3);
         String targetCurrencyCode = code.substring(3,6);
-        Currency base = currencies.readByCode(baseCurrencyCode);
-        Currency target = currencies.readByCode(targetCurrencyCode);
-        if (base == null || target == null){
-            return null;
-        }
+        String statement = "SELECT * " +
+                "FROM exchangeRates " +
+                "JOIN currencies base ON base.id = exchangeRates.baseCurrencyId " +
+                "JOIN currencies target ON target.id = exchangeRates.targetCurrencyId " +
+                "WHERE base.code = ? AND target.code = ?";
+
+
         try(PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
-            preparedStatement.setLong(1, base.getId());
-            preparedStatement.setLong(2, target.getId());
+            preparedStatement.setString(1, baseCurrencyCode);
+            preparedStatement.setString(2, targetCurrencyCode);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             toReturn = generateExchangeRate(resultSet);
@@ -86,7 +87,6 @@ public class ExchangeRepository extends AbstractCRUD<ExchangeRate> {
             return false;
         }
 
-
         String stringStatement =
                 "INSERT INTO exchangeRates " +
                 "(baseCurrencyId, targetCurrencyId, rate) " +
@@ -102,6 +102,27 @@ public class ExchangeRepository extends AbstractCRUD<ExchangeRate> {
             preparedStatement.setBigDecimal(3,rate);
             preparedStatement.execute();
             return true;
+
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    public boolean update(ExchangeRate entity){
+        if (!isPresent(entity)){
+            return false;
+        }
+        String stringStatement =
+                "UPDATE exchangeRates " +
+                "SET rate = ? " +
+                "WHERE id = ?";
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(stringStatement)) {
+            preparedStatement.setBigDecimal(1, entity.getRate());
+            preparedStatement.setLong(2,entity.getId());
+
+            boolean dbResult = preparedStatement.execute();
+            return dbResult;
 
         } catch (SQLException e) {
             return false;
