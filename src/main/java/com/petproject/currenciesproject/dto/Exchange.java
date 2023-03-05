@@ -12,14 +12,7 @@ public class Exchange {
     private BigDecimal amount;
     private BigDecimal convertedAmount;
 
-
-    public Exchange(Currency baseCurrency, Currency targetCurrency, BigDecimal rate, BigDecimal amount, BigDecimal convertedAmount) {
-        this.baseCurrency = baseCurrency;
-        this.targetCurrency = targetCurrency;
-        this.rate = rate;
-        this.amount = amount;
-        this.convertedAmount = convertedAmount;
-    }
+    private Exchange() { }
 
     public Currency getBaseCurrency() {
         return baseCurrency;
@@ -61,6 +54,10 @@ public class Exchange {
         this.convertedAmount = convertedAmount;
     }
 
+    public static Builder newBuilder(){
+        return new Exchange().new Builder();
+    }
+
     @Override
     public String toString(){
         ObjectMapper om = new ObjectMapper();
@@ -68,6 +65,39 @@ public class Exchange {
             return om.writeValueAsString(this);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public class Builder{
+        private Builder() { }
+
+        public Builder setBaseCurrency(Currency baseCurrency){
+            Exchange.this.setBaseCurrency(baseCurrency);
+            return this;
+        }
+
+        public Builder setTargetCurrency(Currency targetCurrency){
+            Exchange.this.setTargetCurrency(targetCurrency);
+            return this;
+        }
+
+        public Builder setRate(BigDecimal rate){
+            Exchange.this.setRate(rate);
+            return this;
+        }
+
+        public Builder setAmmount(BigDecimal ammount){
+            Exchange.this.setAmount(ammount);
+            return this;
+        }
+
+        public Builder setConvertedAmount(BigDecimal convertedAmount){
+            Exchange.this.setConvertedAmount(convertedAmount);
+            return this;
+        }
+
+        public Exchange build(){
+            return Exchange.this;
         }
     }
 }

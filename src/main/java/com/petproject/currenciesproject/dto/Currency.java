@@ -9,22 +9,8 @@ public class Currency {
     private String code;
     private String sign;
 
-    /*public Currency(long id, String name, String code, String sign) {
-        super(id);
-        this.name = name;
-        this.code = code;
-        this.sign = sign;
-    }
-    public Currency(String name, String code, String sign) {
-        this.name = name;
-        this.code = code;
-        this.sign = sign;
-    }*/
 
     private Currency(){ }
-
-
-
     public long getId() {
         return id;
     }

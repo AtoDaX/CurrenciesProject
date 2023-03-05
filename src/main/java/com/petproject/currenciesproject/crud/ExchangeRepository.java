@@ -29,6 +29,7 @@ public class ExchangeRepository extends AbstractCRUD<ExchangeRate> {
                     .setTargetCurrency(currencies.readById(resultSet.getLong("targetCurrencyId")))
                     .setRate(resultSet.getBigDecimal("rate"))
                     .build();
+
             return toReturn;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -46,6 +47,7 @@ public class ExchangeRepository extends AbstractCRUD<ExchangeRate> {
         ExchangeRate toReturn;
         String baseCurrencyCode = code.substring(0,3);
         String targetCurrencyCode = code.substring(3,6);
+
         String statement = "SELECT * " +
                 "FROM exchangeRates " +
                 "JOIN currencies base ON base.id = exchangeRates.baseCurrencyId " +
@@ -67,11 +69,13 @@ public class ExchangeRepository extends AbstractCRUD<ExchangeRate> {
 
     @Override
     public List<ExchangeRate> readAll() {
+
         List<ExchangeRate> toReturn = new ArrayList<>();
         String stringStatement = "SELECT * FROM exchangeRates";
 
         try(Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(stringStatement);
+
             while (resultSet.next()){
                 toReturn.add(generateExchangeRate(resultSet));
             }
@@ -133,13 +137,27 @@ public class ExchangeRepository extends AbstractCRUD<ExchangeRate> {
         String statement = "SELECT EXISTS(SELECT * FROM exchangeRates WHERE baseCurrencyId=? AND targetCurrencyId=?)";
 
         try(PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
-
             preparedStatement.setLong(1,entity.getBaseCurrency().getId());
             preparedStatement.setLong(2,entity.getTargetCurrency().getId());
-
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.getBoolean(1);
+        } catch (SQLException e) {
+            return false;
+        }
+    }
 
+    public boolean isPresent(String baseCode, String targetCode){
+        String statement = "SELECT EXISTS(SELECT * " +
+                "FROM exchangeRates " +
+                "JOIN currencies base ON base.id = exchangeRates.baseCurrencyId " +
+                "JOIN currencies target ON target.id = exchangeRates.targetCurrencyId " +
+                "WHERE base.code = ? AND target.code = ?)";
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
+            preparedStatement.setString(1, baseCode);
+            preparedStatement.setString(2, targetCode);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.getBoolean(1);
         } catch (SQLException e) {
             return false;
         }

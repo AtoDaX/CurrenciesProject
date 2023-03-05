@@ -11,13 +11,13 @@ import java.io.IOException;
 
 @WebServlet(name = "currencyServlet", urlPatterns = "/currency/*")
 public class CurrencyServlet extends HttpServlet {
-
     private final CurrencyRepository crud = new CurrencyRepository();
-
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
         response.setContentType("text/json");
+
         String currencyCode = request.getPathInfo().replaceAll("/", "").toUpperCase();
 
         if (currencyCode.length() != 3) {

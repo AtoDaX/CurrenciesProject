@@ -40,6 +40,11 @@ public class ExchangeRatesServlet extends HttpServlet {
             return;
         }
 
+        if (reqBaseCode.equalsIgnoreCase(reqTargetCode)){
+            response.sendError(400, "Base and target currencies can't be same!");
+            return;
+        }
+
         if (!currencyRepository.isPresent(reqBaseCode) || !currencyRepository.isPresent(reqTargetCode)){
             response.sendError(408, "There is no currency with such code!");
             return;

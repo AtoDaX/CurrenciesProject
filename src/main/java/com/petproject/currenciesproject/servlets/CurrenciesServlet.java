@@ -43,11 +43,7 @@ public class CurrenciesServlet extends HttpServlet {
 
         boolean dbAnswer = crud.create(toInsert);
         if (!dbAnswer){
-            response.sendError(409, "Currency with such code already exists!");
+            response.sendError(409, "Currency with this code already exists!");
         }
-
-
-
     }
-
 }

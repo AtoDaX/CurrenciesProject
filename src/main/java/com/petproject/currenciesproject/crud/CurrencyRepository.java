@@ -8,7 +8,6 @@ import java.util.List;
 
 public class CurrencyRepository extends AbstractCRUD<Currency>{
     protected Connection connection;
-
     {
         try {
             dataSource.setUrl(dbUrl);
@@ -20,6 +19,7 @@ public class CurrencyRepository extends AbstractCRUD<Currency>{
 
     private Currency generateCurrency(ResultSet resultSet){
         Currency toReturn;
+
         try {
             toReturn = Currency.newBuilder()
                     .setCurrencyId(resultSet.getLong("id"))
@@ -27,9 +27,11 @@ public class CurrencyRepository extends AbstractCRUD<Currency>{
                     .setName(resultSet.getString("fullName"))
                     .setSign(resultSet.getString("sign"))
                     .build();
+
             if (toReturn.getId()==0){
                 toReturn = null;
             }
+
             return toReturn;
         } catch (SQLException e) {
             return null;
@@ -40,10 +42,12 @@ public class CurrencyRepository extends AbstractCRUD<Currency>{
     public Currency readByCode(String code){
         Currency toReturn;
         String statement = "SELECT * FROM currencies WHERE code = ?";
+
         try(PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
             preparedStatement.setString(1,code);
             ResultSet resultSet = preparedStatement.executeQuery();
             toReturn = generateCurrency(resultSet);
+
             return toReturn;
         } catch (SQLException e) {
             return null;
@@ -52,12 +56,13 @@ public class CurrencyRepository extends AbstractCRUD<Currency>{
 
     @Override
     public Currency readById(Long id) {
-
         String statement = "SELECT * FROM currencies WHERE id = ?";
+
         try(PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
             preparedStatement.setLong(1,id);
             ResultSet resultSet = preparedStatement.executeQuery();
             Currency toReturn = generateCurrency(resultSet);
+
             return toReturn;
         } catch (SQLException e) {
             return null;
@@ -66,13 +71,17 @@ public class CurrencyRepository extends AbstractCRUD<Currency>{
 
     @Override
     public List<Currency> readAll() {
+
         List<Currency> toReturn = new ArrayList<>();
         String stringStatement = "SELECT * FROM currencies";
+
         try(Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(stringStatement);
+
             while (resultSet.next()){
                 toReturn.add(generateCurrency(resultSet));
             }
+
             return toReturn;
         } catch (SQLException e) {
             return null;
